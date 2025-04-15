@@ -1,6 +1,6 @@
 /*
-	graph
-	This problem requires you to implement a basic graph functio
+    graph
+    This problem requires you to implement a basic graph functio
 */
 // I AM NOT DONE
 
@@ -30,6 +30,24 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (from_node, to_node, weight) = edge;
+        let from_node = String::from(from_node);
+        let to_node = String::from(to_node);
+        let weight = weight;
+        if !self.contains(&from_node) {
+            self.add_node(&from_node);
+        }
+        if !self.contains(&to_node) {
+            self.add_node(&to_node);
+        }
+        self.adjacency_table_mutable()
+            .entry(from_node.clone())
+            .or_insert_with(Vec::new)
+            .push((to_node.clone(), weight));
+        self.adjacency_table_mutable()
+            .entry(to_node.clone())
+            .or_insert_with(Vec::new)
+            .push((from_node.clone(), weight));
     }
 }
 pub trait Graph {
@@ -38,10 +56,38 @@ pub trait Graph {
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
     fn add_node(&mut self, node: &str) -> bool {
         //TODO
-		true
+        let node = String::from(node);
+        if self.contains(&node) {
+            return false;
+        }
+        self.adjacency_table_mutable()
+            .insert(node.clone(), Vec::new());
+        self.adjacency_table_mutable()
+            .get_mut(&node)
+            .unwrap()
+            .push((node.clone(), 0));
+        true
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (from_node, to_node, weight) = edge;
+        let from_node = String::from(from_node);
+        let to_node = String::from(to_node);
+        let weight = weight;
+        if !self.contains(&from_node) {
+            self.add_node(&from_node);
+        }
+        if !self.contains(&to_node) {
+            self.add_node(&to_node);
+        }
+        self.adjacency_table_mutable()
+            .entry(from_node.clone())
+            .or_insert_with(Vec::new)
+            .push((to_node.clone(), weight));
+        self.adjacency_table_mutable()
+            .entry(to_node.clone())
+            .or_insert_with(Vec::new)
+            .push((from_node.clone(), weight));
     }
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
